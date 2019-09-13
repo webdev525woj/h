@@ -87,7 +87,9 @@ def includeme(config):
 
     config.add_settings(
         {
-            "tm.manager_hook": lambda request: transaction.TransactionManager(),
+            "tm.manager_hook": lambda request: transaction.TransactionManager(
+                explicit=True
+            ),
             "tm.annotate_user": False,
         }
     )
