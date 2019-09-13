@@ -101,8 +101,6 @@ def configure(environ=None, settings=None):
         "h.client_rpc_allowed_origins", "CLIENT_RPC_ALLOWED_ORIGINS", type_=aslist
     )
 
-    settings_manager.set("h.db_session_checks", "DB_SESSION_CHECKS", type_=asbool)
-
     # Environment name, provided by the deployment environment. Please do
     # *not* toggle functionality based on this value. It is intended as a
     # label only.
