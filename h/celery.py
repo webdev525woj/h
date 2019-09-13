@@ -11,6 +11,7 @@ integrates it with the Pyramid application by attaching a bootstrapped fake
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+from contextlib import suppress
 from datetime import timedelta
 import logging
 import os
@@ -19,6 +20,8 @@ from celery import Celery
 from celery import signals
 from celery.utils.log import get_task_logger
 from kombu import Exchange, Queue
+from transaction.interfaces import NoTransaction
+
 
 __all__ = ("celery", "get_task_logger")
 
@@ -109,13 +112,15 @@ def reset_nipsa_cache(sender, **kwargs):
 @signals.task_success.connect
 def transaction_commit(sender, **kwargs):
     """Commit the request transaction after each successful task execution."""
-    sender.app.request.tm.commit()
+    with suppress(NoTransaction):
+        sender.app.request.tm.commit()
 
 
 @signals.task_failure.connect
 def transaction_abort(sender, **kwargs):
     """Abort the request transaction after each failed task execution."""
-    sender.app.request.tm.abort()
+    with suppress(NoTransaction):
+        sender.app.request.tm.abort()
 
 
 @signals.task_failure.connect
