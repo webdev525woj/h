@@ -94,6 +94,12 @@ def bootstrap_worker(sender, **kwargs):
 
 
 @signals.task_prerun.connect
+def transaction_begin(sender, **kwargs):
+    """Begin a new pyramid_tm transaction before running each task."""
+    sender.app.request.tm.begin()
+
+
+@signals.task_prerun.connect
 def reset_nipsa_cache(sender, **kwargs):
     """Reset nipsa service cache before running each task."""
     svc = sender.app.request.find_service(name="nipsa")
